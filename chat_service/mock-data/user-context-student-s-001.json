@@ -1,0 +1,27 @@
+{
+  "student_id": "00000000-0000-0000-0003-000000000001",
+  "user_id": "00000000-0000-0000-0003-000000000001",
+  "school_id": "00000000-0000-0000-0000-000000000001",
+  "role": "student",
+  "full_name": "John Doe",
+  "admission_number": "1042",
+  "class_id": "00000000-0000-0000-0004-000000000001",
+  "section": "A",
+  "parent_phone": "+250786378333",
+  "teachers": [
+    {
+      "teacher_id": "00000000-0000-0000-0002-000000000001",
+      "user_id": "00000000-0000-0000-0002-000000000001",
+      "full_name": "David Mugisha",
+      "subject": "English",
+      "is_online": false
+    },
+    {
+      "teacher_id": "00000000-0000-0000-0002-000000000002",
+      "user_id": "00000000-0000-0000-0002-000000000002",
+      "full_name": "Sarah Uwimana",
+      "subject": "Mathematics",
+      "is_online": true
+    }
+  ]
+}

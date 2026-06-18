@@ -1,0 +1,54 @@
+# ── Flutter / Dart ────────────────────────────────────────────────────────────
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.pub-cache/
+**/.pub/
+**/pubspec.lock
+**/*.iml
+**/GeneratedPluginRegistrant.*
+**/.packages
+
+# Android
+**/android/.gradle/
+**/android/local.properties
+**/android/key.properties
+**/android/app/google-services.json
+**/android/app/*.jks
+**/android/app/*.keystore
+
+# iOS
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Runner.xcworkspace/xcuserdata/
+**/ios/Runner.xcworkspace/xcshareddata/
+
+# ── Node.js (chat_service) ────────────────────────────────────────────────────
+chat_service/node_modules/
+chat_service/.env
+chat_service/logs/
+chat_service/coverage/
+chat_service/dist/
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Secrets / credentials ─────────────────────────────────────────────────────
+**/*.pem
+**/*.p8
+**/*.p12
+**/*.jks
+**/*.keystore
+**/google-services.json
+**/GoogleService-Info.plist
+**/.env
+**/.env.local
+**/.env.production

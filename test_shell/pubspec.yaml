@@ -1,0 +1,31 @@
+name: netrack_chatroom_test_shell
+description: Development test shell for the Netrack Chatroom package.
+version: 1.0.0
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # The chatroom package (local path)
+  netrack_chatroom:
+    path: ../chatroom_package
+
+  # Firebase (same version as package)
+  firebase_core: 3.15.2
+
+  # UI
+  flutter_animate: ^4.5.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/

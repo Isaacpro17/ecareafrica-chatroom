@@ -1,0 +1,34 @@
+{
+  "user_id": "00000000-0000-0000-0002-000000000001",
+  "school_id": "00000000-0000-0000-0000-000000000001",
+  "role": "teacher",
+  "full_name": "David Mugisha",
+  "subjects": ["English"],
+  "classes": [
+    {
+      "class_id": "00000000-0000-0000-0004-000000000001",
+      "class_name": "Class 8",
+      "section": "A",
+      "students": [
+        {
+          "student_id": "00000000-0000-0000-0003-000000000001",
+          "admission_number": "1042",
+          "full_name": "John Doe",
+          "parent_ids": ["00000000-0000-0000-0001-000000000001"]
+        },
+        {
+          "student_id": "00000000-0000-0000-0003-000000000002",
+          "admission_number": "1043",
+          "full_name": "Alice Smith",
+          "parent_ids": ["00000000-0000-0000-0001-000000000002"]
+        },
+        {
+          "student_id": "00000000-0000-0000-0003-000000000003",
+          "admission_number": "1044",
+          "full_name": "Bob Johnson",
+          "parent_ids": ["00000000-0000-0000-0001-000000000003"]
+        }
+      ]
+    }
+  ]
+}

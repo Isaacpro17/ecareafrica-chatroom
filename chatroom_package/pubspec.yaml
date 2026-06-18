@@ -1,0 +1,75 @@
+name: netrack_chatroom
+description: Netrack Education ERP — Chatroom Feature Package (Parent, Teacher, Student)
+version: 1.0.0
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # HTTP & Networking
+  dio: ^5.4.0
+  http: ^1.2.0
+
+  # Firebase
+  firebase_core: ^3.15.2
+  firebase_messaging: ^15.2.0
+  firebase_database: ^11.3.0
+
+  # State Management
+  provider: ^6.1.2
+
+  # Local Storage
+  shared_preferences: ^2.3.2
+  flutter_secure_storage: ^9.2.2
+  path_provider: ^2.1.3
+
+  # Media & Files
+  image_picker: ^1.1.2
+  file_picker: ^8.1.2
+  flutter_sound: ^9.2.13
+  image: ^4.1.7
+  flutter_image_compress: ^2.3.0
+  mime: ^1.0.5
+  open_file: ^3.3.2
+  permission_handler: ^11.3.1
+
+  # UI & Design
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
+  lottie: ^3.1.0
+  flutter_animate: ^4.5.0
+  intl: ^0.19.0
+  timeago: ^3.6.1
+  badges: ^3.1.2
+
+  # Audio Player
+  just_audio: ^0.9.36
+  audio_waveforms: ^1.0.5
+
+  # JWT
+  dart_jsonwebtoken: ^2.8.1
+
+  # UUID
+  uuid: ^4.3.3
+
+  # Connectivity
+  connectivity_plus: ^6.0.3
+
+  # Notifications
+  flutter_local_notifications: ^17.2.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/animations/
+    - assets/icons/
