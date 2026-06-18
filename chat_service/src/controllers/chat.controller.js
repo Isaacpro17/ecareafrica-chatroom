@@ -32,10 +32,12 @@ async function resolveDisplayNames(threads, userId, schoolId, role, authToken) {
     }
 
     if (role === 'teacher') {
-      // Build map: parent_id → "Parent of <student_name>"
+      // Build maps: student_id → full_name, parent_id → "Parent of <student>"
+      const studentMap = {};
       const parentMap = {};
       for (const cls of (ctx.classes || [])) {
         for (const student of (cls.students || [])) {
+          studentMap[student.student_id] = student.full_name;
           for (const pid of (student.parent_ids || [])) {
             if (!parentMap[pid]) {
               parentMap[pid] = `Parent of ${student.full_name}`;
@@ -43,13 +45,23 @@ async function resolveDisplayNames(threads, userId, schoolId, role, authToken) {
           }
         }
       }
-      return threads.map(t => ({
-        ...t,
-        display_name: t.parent_id && parentMap[t.parent_id]
-          ? parentMap[t.parent_id]
-          : '',
-        subject_label: (ctx.subjects || [])[0] ?? null,
-      }));
+      return threads.map(t => {
+        let displayName = '';
+        if (t.thread_initiator === 'student') {
+          displayName = t.student_id && studentMap[t.student_id]
+            ? studentMap[t.student_id]
+            : '';
+        } else {
+          displayName = t.parent_id && parentMap[t.parent_id]
+            ? parentMap[t.parent_id]
+            : '';
+        }
+        return {
+          ...t,
+          display_name: displayName,
+          subject_label: (ctx.subjects || [])[0] ?? null,
+        };
+      });
     }
 
     if (role === 'student') {
