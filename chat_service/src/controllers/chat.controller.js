@@ -5,6 +5,76 @@ const { publishFirebaseEvent } = require('../services/firebase.service');
 const { sendPushNotification } = require('../services/notification.service');
 const { logger } = require('../utils/logger');
 
+// ── Enrich threads with display_name + subject_label from user context ────────
+async function resolveDisplayNames(threads, userId, schoolId, role, authToken) {
+  if (!threads.length) return threads;
+  try {
+    const ctx = await getUserContext(userId, schoolId, authToken);
+
+    if (role === 'parent') {
+      // Build map: teacher user_id → { name, subject }
+      const teacherMap = {};
+      for (const child of (ctx.children || [])) {
+        for (const t of (child.teachers || [])) {
+          if (!teacherMap[t.user_id]) {
+            teacherMap[t.user_id] = { name: t.full_name, subject: t.subject };
+          }
+        }
+      }
+      return threads.map(t => {
+        const info = teacherMap[t.teacher_id];
+        return {
+          ...t,
+          display_name: info ? `${info.name} — ${info.subject} Teacher` : '',
+          subject_label: info?.subject ?? null,
+        };
+      });
+    }
+
+    if (role === 'teacher') {
+      // Build map: parent_id → "Parent of <student_name>"
+      const parentMap = {};
+      for (const cls of (ctx.classes || [])) {
+        for (const student of (cls.students || [])) {
+          for (const pid of (student.parent_ids || [])) {
+            if (!parentMap[pid]) {
+              parentMap[pid] = `Parent of ${student.full_name}`;
+            }
+          }
+        }
+      }
+      return threads.map(t => ({
+        ...t,
+        display_name: t.parent_id && parentMap[t.parent_id]
+          ? parentMap[t.parent_id]
+          : '',
+        subject_label: (ctx.subjects || [])[0] ?? null,
+      }));
+    }
+
+    if (role === 'student') {
+      // Build map: teacher user_id → { name, subject }
+      const teacherMap = {};
+      for (const t of (ctx.teachers || [])) {
+        if (!teacherMap[t.user_id]) {
+          teacherMap[t.user_id] = { name: t.full_name, subject: t.subject };
+        }
+      }
+      return threads.map(t => {
+        const info = teacherMap[t.teacher_id];
+        return {
+          ...t,
+          display_name: info ? `${info.name} — ${info.subject} Teacher` : '',
+          subject_label: info?.subject ?? null,
+        };
+      });
+    }
+  } catch (e) {
+    logger.warn('resolveDisplayNames failed:', e.message);
+  }
+  return threads; // graceful fallback — return without names
+}
+
 // ── GET /chat/threads ─────────────────────────────────────────────────────────
 async function getThreads(req, res) {
   try {
@@ -54,7 +124,11 @@ async function getThreads(req, res) {
       [...params, userId, role]
     );
 
-    res.json({ data: result.rows });
+    const enriched = await resolveDisplayNames(
+      result.rows, userId, schoolId, role,
+      req.headers.authorization?.slice(7)
+    );
+    res.json({ data: enriched });
   } catch (err) {
     logger.error('getThreads error:', err);
     res.status(500).json({ error: 'SERVER_ERROR' });
@@ -89,7 +163,11 @@ async function createThread(req, res) {
     );
 
     logger.info(`createThread success: threadId=${result.rows[0]?.id}`);
-    res.status(200).json({ data: result.rows[0] });
+    const [enriched] = await resolveDisplayNames(
+      result.rows, userId, schoolId, req.user.role,
+      req.headers.authorization?.slice(7)
+    );
+    res.status(200).json({ data: enriched });
   } catch (err) {
     logger.error('createThread error message:', err.message);
     logger.error('createThread error detail:', err.detail);
