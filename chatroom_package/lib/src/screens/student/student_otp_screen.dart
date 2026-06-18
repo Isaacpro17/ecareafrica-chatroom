@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
+import '../../models/user_context.dart';
 import '../../services/api_service.dart';
 import '../../services/auth_service.dart';
 import '../../providers/threads_provider.dart';
@@ -46,6 +47,18 @@ class _StudentOtpScreenState extends State<StudentOtpScreen> {
       final res = await ApiService.verifyStudentOtp(widget.studentId, _otp);
       final token = res.data['token'] as String;
       await AuthService.instance.setToken(token);
+
+      // Hydrate user context so teacher-tap navigation has the student_id available.
+      try {
+        final ctxRes = await ApiService.getMe();
+        final ctx = UserContext.fromJson(
+          Map<String, dynamic>.from(ctxRes.data['data'] as Map),
+        );
+        AuthService.instance.setUserContext(ctx);
+      } catch (_) {
+        // Context load failure is non-fatal — proceed to home screen.
+      }
+
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
@@ -59,7 +72,6 @@ class _StudentOtpScreenState extends State<StudentOtpScreen> {
     } catch (e) {
       setState(() {
         _error = 'Incorrect OTP. Check the SMS sent to your parent\'s phone and try again.';
-        // Clear fields
         for (final c in _controllers) c.clear();
         _focusNodes[0].requestFocus();
       });

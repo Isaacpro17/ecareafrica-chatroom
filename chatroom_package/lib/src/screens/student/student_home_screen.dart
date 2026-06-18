@@ -128,9 +128,23 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
     );
   }
 
+  bool _openingThread = false;
+
   Future<void> _openOrCreateThread(TeacherContact teacher) async {
+    if (_openingThread) return;
+    _openingThread = true;
+
     final ctx = AuthService.instance.userContext;
-    if (ctx == null) return;
+    if (ctx == null) {
+      _openingThread = false;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Session not ready. Please restart the app.')),
+        );
+      }
+      return;
+    }
+
     try {
       final res = await ApiService.createThread({
         'teacher_id': teacher.teacherId,
@@ -138,20 +152,29 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
         'thread_type': 'direct',
         'thread_initiator': 'student',
       });
-      final thread =
-          ChatThread.fromJson(res.data['data'] as Map<String, dynamic>);
+
+      final raw = res.data;
+      debugPrint('[StudentHome] createThread response: $raw');
+
+      final data = (raw is Map) ? raw['data'] : null;
+      if (data == null) throw Exception('Server returned no thread data');
+
+      final thread = ChatThread.fromJson(Map<String, dynamic>.from(data as Map));
       if (!mounted) return;
       context.read<ThreadsProvider>().addOrUpdateThread(thread);
       Navigator.push(
         context,
-        MaterialPageRoute(
-            builder: (_) => ChatThreadScreen(thread: thread)),
+        MaterialPageRoute(builder: (_) => ChatThreadScreen(thread: thread)),
       );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Could not open chat. Please try again.')),
-      );
+    } catch (e, st) {
+      debugPrint('[StudentHome] _openOrCreateThread error: $e\n$st');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open chat. Please try again.')),
+        );
+      }
+    } finally {
+      _openingThread = false;
     }
   }
 }
